@@ -1,0 +1,26 @@
+{
+  "envVars": {
+    "AF_SESSION_ID": "35980",
+    "AF_PROJECT_TYPE": "single-repo",
+    "AF_PACKAGE_MANAGER": "",
+    "AF_FRAMEWORK": "",
+    "AF_PROJECT_ROOT": "I:\\Dream Projects\\hero-sections",
+    "AF_ACTIVE_PLAN": "",
+    "AF_SUGGESTED_PLAN": "",
+    "AF_REPORTS_PATH": "plans/reports/",
+    "AF_PLANS_PATH": "plans",
+    "AF_WORKFLOWS_PATH": ".claude/logs/runs",
+    "AF_GIT_BRANCH": "",
+    "AF_GIT_URL": "",
+    "AF_NODE_VERSION": "v24.14.0",
+    "AF_OS_PLATFORM": "win32",
+    "AF_USER": "mdobaid",
+    "AF_TIMEZONE": "Asia/Calcutta",
+    "AF_MEMORY_LOADED": "false",
+    "AF_MEMORY_COUNT": "0"
+  },
+  "contextSummary": "Type: single-repo",
+  "agent": "ready",
+  "phase": "-",
+  "cachedAt": 1792343775456
+}

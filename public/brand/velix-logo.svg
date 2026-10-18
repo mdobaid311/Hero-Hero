@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 340" width="400" height="340">
+  <title>Velix</title>
+  <defs>
+    <linearGradient id="armL" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#f7e9c6"/>
+      <stop offset="0.45" stop-color="#dcbd7c"/>
+      <stop offset="0.8" stop-color="#b8924f"/>
+      <stop offset="1" stop-color="#9a763b"/>
+    </linearGradient>
+    <linearGradient id="armR" x1="1" y1="0" x2="0.65" y2="1">
+      <stop offset="0" stop-color="#c7a261"/>
+      <stop offset="0.5" stop-color="#9c783d"/>
+      <stop offset="1" stop-color="#76582b"/>
+    </linearGradient>
+  </defs>
+  <!-- Emblem: faceted chevron -->
+  <polygon points="36,14 116,14 200,170 200,250 168,250" fill="url(#armL)"/>
+  <polygon points="284,14 364,14 232,250 200,250 200,170" fill="url(#armR)"/>
+  <polygon points="36,14 116,14 200,170 284,14 364,14 232,250 168,250" fill="none" stroke="#fff5de" stroke-width="3" stroke-linejoin="miter"/>
+  <!-- Wordmark -->
+  <path d="M65 285 L80 321 L95 285 M155 285 H125 V321 H155 M125 303 H150 M185 285 V321 H215 M260 285 V321 M305 285 L335 321 M335 285 L305 321" fill="none" stroke="#e9edf2" stroke-width="4.5" stroke-linejoin="miter"/>
+</svg>

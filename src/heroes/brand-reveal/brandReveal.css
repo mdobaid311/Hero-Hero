@@ -1,0 +1,194 @@
+/* Brand Reveal. Default styles = the finished composition; the GSAP timeline
+   rewinds them to the opening frame, so no-JS / reduced motion shows the end state. */
+
+.br {
+  /* Theme: obsidian + champagne. Every colour in the hero derives from these. */
+  --ink: #05070b; /* page base */
+  --deep: #0a111d; /* mid background */
+  --steel: #1a2a40; /* lit background centre, empty panels */
+  --gold: #d4b26c; /* accent: glows, edges, logo */
+  --gold-light: #f3e3bc;
+  --platinum: #dde4ec;
+  --cool: #5a7ca6; /* cool ambient light */
+  --text: #f1ede4;
+  position: relative;
+  height: calc(100vh * (1 + var(--br-length)));
+  height: calc(100svh * (1 + var(--br-length)));
+  background: var(--ink);
+}
+
+.br-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+}
+.br-stage > * { position: absolute; inset: 0; }
+
+/* ---------- Background ---------- */
+.br-bg {
+  background: radial-gradient(120% 90% at 50% 42%, var(--steel) 0%, var(--deep) 45%, var(--ink) 100%);
+}
+.br-bg__light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80vmax;
+  height: 80vmax;
+  margin: -40vmax 0 0 -40vmax;
+  border-radius: 50%;
+  will-change: transform;
+  animation: br-drift 22s ease-in-out infinite alternate;
+}
+.br-bg__light--a { translate: -26vw 20vh; background: radial-gradient(closest-side, color-mix(in srgb, var(--gold) 22%, transparent), transparent); }
+.br-bg__light--b { translate: 28vw -22vh; background: radial-gradient(closest-side, color-mix(in srgb, var(--cool) 26%, transparent), transparent); animation-duration: 27s; animation-delay: -9s; }
+.br-bg__light--c { translate: 10vw 32vh; background: radial-gradient(closest-side, color-mix(in srgb, var(--platinum) 9%, transparent), transparent); animation-duration: 31s; animation-delay: -16s; }
+/* Fine grain to stop gradient banding, plus a vignette. */
+.br-bg::before,
+.br-bg::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+.br-bg::before {
+  opacity: .08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.br-bg::after { background: radial-gradient(ellipse at center, transparent 40%, #000000b3 100%); }
+
+@keyframes br-drift {
+  from { transform: translate3d(-4vw, -3vh, 0) scale(1); }
+  to { transform: translate3d(5vw, 4vh, 0) scale(1.15); }
+}
+
+.br-defs { width: 0; height: 0; }
+
+/* ---------- Mosaic ---------- */
+.br-mosaic { z-index: 1; perspective: 1100px; }
+.br-tile {
+  position: absolute;
+  overflow: hidden;
+  /* Empty "frame" state seen while panels fly in, before imagery lands. */
+  background: linear-gradient(160deg, color-mix(in srgb, var(--steel) 78%, transparent), color-mix(in srgb, var(--ink) 88%, transparent));
+  will-change: transform, opacity;
+}
+/* Shared grade so 15 different photos read as one set. */
+.br-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--deep) 30%, transparent) 0%, color-mix(in srgb, var(--gold) 5%, transparent) 55%, color-mix(in srgb, var(--ink) 42%, transparent) 100%);
+  pointer-events: none;
+}
+.br-tile__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, opacity;
+}
+
+/* Edges: each tile strokes its own polygon; clip-path keeps the inner half,
+   so two neighbours together draw one even line over the seam. */
+.br-edge { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; fill: none; }
+.br-edge polygon { vector-effect: non-scaling-stroke; stroke: url(#br-edge-grad); stroke-linejoin: miter; }
+.br-edge__glow { stroke-width: 14px; opacity: .18; /* = motion.edge.restGlow */ }
+.br-edge__line { stroke-width: 2.5px; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.br-edge .br-edge__spark { stroke: #fff; stroke-width: 4px; stroke-dasharray: .08 .92; opacity: 0; }
+
+/* ---------- Dim layer before the brand moment ---------- */
+.br-dim {
+  z-index: 2;
+  background: radial-gradient(60% 55% at 50% 50%, color-mix(in srgb, var(--ink) 80%, transparent) 0%, color-mix(in srgb, var(--ink) 58%, transparent) 55%, color-mix(in srgb, var(--ink) 42%, transparent) 100%);
+}
+
+/* ---------- Logos ---------- */
+.br-intro,
+.br-final { display: grid; place-items: center; pointer-events: none; }
+.br-intro { z-index: 3; opacity: 0; visibility: hidden; }
+.br-final { z-index: 4; }
+
+.br-intro__glow,
+.br-final__glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(95vw, 920px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--gold) 26%, transparent), color-mix(in srgb, var(--cool) 12%, transparent) 45%, transparent 72%);
+}
+.br-intro__glow { animation: br-breathe 6s ease-in-out infinite alternate; }
+@keyframes br-breathe {
+  from { transform: scale(.9); opacity: .75; }
+  to { transform: scale(1.06); opacity: 1; }
+}
+
+.br-intro__logo {
+  position: relative;
+  width: clamp(170px, 24vw, 380px);
+  height: auto;
+  filter: drop-shadow(0 0 22px color-mix(in srgb, var(--gold) 30%, transparent));
+}
+
+.br-final__logo { position: relative; width: clamp(190px, 30vw, 460px); aspect-ratio: 400 / 340; }
+.br-final__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 26px color-mix(in srgb, var(--gold) 40%, transparent)) drop-shadow(0 8px 34px #000000b3);
+}
+.br-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask: var(--br-logo) center / contain no-repeat;
+  mask: var(--br-logo) center / contain no-repeat;
+}
+.br-shine__band {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, #fff0 42%, #ffffffe0 50%, #fff0 58%, transparent 62%);
+  transform: translateX(100%);
+}
+
+/* ---------- Scroll cue ---------- */
+.br-stage > .br-cue {
+  inset: auto 0 clamp(18px, 4.5vh, 44px) 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font: 500 10px/1 system-ui, sans-serif;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  opacity: 0;
+  visibility: hidden;
+}
+.br-cue span { padding-left: .42em; opacity: .7; }
+.br-cue i { position: relative; width: 1px; height: 46px; overflow: hidden; background: linear-gradient(#fff0, #ffffff4d); }
+.br-cue i::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--gold-light);
+  animation: br-cue 2.2s cubic-bezier(.6, 0, .3, 1) infinite;
+}
+@keyframes br-cue {
+  from { transform: translateY(-14px); }
+  to { transform: translateY(48px); }
+}
+
+/* ---------- Reduced motion: finished frame, no long scroll ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .br { height: auto; }
+  .br-stage { position: relative; }
+  .br-bg__light,
+  .br-intro__glow,
+  .br-cue i::after { animation: none; }
+}
