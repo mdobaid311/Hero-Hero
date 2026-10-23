@@ -7,15 +7,17 @@ const FONTS = 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..12
 export default function SymbioteHero() {
   const root = useRef<HTMLElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
+  const background = useRef<HTMLCanvasElement>(null)
   const reticle = useRef<HTMLDivElement>(null)
   const status = useRef<HTMLElement>(null)
-  useSymbiote({ root, canvas, reticle, status })
+  useSymbiote({ root, canvas, background, reticle, status })
 
   return (
     <div className="sy-page">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link rel="stylesheet" href={FONTS} precedence="default" />
       <section ref={root} className="sy" aria-labelledby="sy-title">
+        <canvas ref={background} className="sy-bg" aria-hidden="true" />
         <canvas ref={canvas} className="sy-canvas" aria-hidden="true" />
         <div className="sy-content">
           <p className="sy-eyebrow">An experiment in living interfaces</p>

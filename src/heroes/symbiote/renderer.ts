@@ -57,7 +57,17 @@ void main() {
   o = vec4(f, 0.0, 0.0, 1.0);
 }`
 
-const FULLSCREEN_VS = `#version 300 es
+/** Smooth value noise, shared with the background shader. */
+export const NOISE_GLSL = `
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+}`
+
+export const FULLSCREEN_VS = `#version 300 es
 void main() {
   vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
   gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
@@ -76,20 +86,15 @@ out vec4 o;
 
 const float T = ${f(R.threshold)};
 float field(vec2 uv) { return texture(u_field, uv).r; }
-float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
-}
+${NOISE_GLSL}
 // Surface height: steep at the rim, still rising toward thick centres (never a flat plateau),
-// plus slow ripples anchored to the body so thick parts catch moving highlight streaks.
+// plus slow swells and sinewy ridges anchored to the body, so thick parts catch moving streaks.
 float height(vec2 uv) {
   float v = field(uv);
   float base = 1.0 - exp(-max(v - T, 0.0) / ${f(R.heightRange)});
   vec2 p = (vec2(uv.x, 1.0 - uv.y) * u_css - u_glow) * 0.03 + u_time * vec2(0.05, 0.08);
-  return base + 0.07 * smoothstep(T, T + 1.5, v) * noise(p);
+  float ridge = 1.0 - abs(noise(p * 2.6 + 4.7) * 2.0 - 1.0);
+  return base + smoothstep(T, T + 1.5, v) * (0.07 * noise(p) + 0.035 * ridge * ridge);
 }
 
 void main() {
@@ -159,7 +164,7 @@ function compile(gl: WebGL2RenderingContext, type: number, src: string) {
   return s
 }
 
-function program(gl: WebGL2RenderingContext, vs: string, fs: string) {
+export function program(gl: WebGL2RenderingContext, vs: string, fs: string) {
   const p = gl.createProgram()
   const v = compile(gl, gl.VERTEX_SHADER, vs)
   const fr = compile(gl, gl.FRAGMENT_SHADER, fs)
